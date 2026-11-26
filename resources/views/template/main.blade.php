@@ -55,6 +55,7 @@ bi-menu-button-wide" viewBox="0 0 16 16">
             </button>
             <div class="collapse navbar-collapse" id="itens">
                 <ul class="navbar-nav ms-auto">
+                    @can("viewAny", App\Models\Aluno::class)
                     <li class="nav-item me-2">
                         <a href="{{ route('aluno.index') }}" class="nav-link">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#FFF" class="bi
@@ -67,6 +68,8 @@ bi-mortarboard-fill" viewBox="0 0 16 16">
                             <span class="ps-1 text-white">Alunos</span>
                         </a>
                     </li>
+                    @endcan
+
                     @can("viewAny", App\Models\Curso::class)
                     <li class="nav-item me-2">
                         <a href="{{ route('curso.index') }}" class="nav-link">
@@ -98,6 +101,7 @@ bi-stickies-fill" viewBox="0 0 16 16">
                     </li>
                     @endcan
 
+                    @can("viewAny", App\Models\Matricula::class)
                     <li class="nav-item me-2">
                         <a href="{{ route('matricula.index') }}" class="nav-link">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#FFF" class="bi
@@ -112,6 +116,8 @@ bi-ui-checks" viewBox="0 0 16 16">
                             <span class="ps-1 text-white">Matrículas</span>
                         </a>
                     </li>
+                    @endcan
+                    
                     <li class="nav-item dropdown pe-3">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#FFF" class="bi

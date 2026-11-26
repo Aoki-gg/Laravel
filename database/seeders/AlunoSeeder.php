@@ -15,9 +15,12 @@ class AlunoSeeder extends Seeder
     {
         $data = [];
 
-        for ($i = 1 ; $i <= 10 ; $i++){
-            $data[] = ["nome" => "Aluno " . $i, "turma" => 2026, "curso_id" => 1]; 
-        }
+        $data = [
+            ["nome" => "JOÃO SILVA", "turma" => 2024, "curso_id" => 1],
+            ["nome" => "ANA SANTOS", "turma" => 2025, "curso_id" => 1],
+            ["nome" => "MARCOS SOUZA", "turma" => 2025, "curso_id" => 2],
+            ["nome" => "BRUNA GOMES", "turma" => 2024, "curso_id" => 2],
+        ];
 
         DB::table("alunos")->insert($data);
     }

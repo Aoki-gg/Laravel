@@ -29,6 +29,9 @@ class CursoController extends Controller
             [],
             'nome'
         );
+        if (request()->is('api/*'))
+            return response()->json($data);
+
         return view('curso.index', compact(['data']));
     }
 
@@ -36,12 +39,17 @@ class CursoController extends Controller
     public function create()
     {
         Gate::authorize('create', Curso::class);
+        if (request()->is('api/*'))
+            return response()->json(['message' => 'Create!']);
         return view('curso.create');
     }
     public function store(CursoRequest $request)
     {
         Gate::authorize('create', Curso::class);
-        $this->service->store($request->validated());
+        $curso = $this->service->store($request->validated());
+        if ($request->is('api/*'))
+            return response()->json($curso, 201);
+
         return redirect()->route('curso.index');
     }
     public function show(string $id)
@@ -49,6 +57,9 @@ class CursoController extends Controller
         $curso = $this->service->find($id);
         Gate::authorize('view', $curso);
         if (isset($curso)) {
+            if (request()->is('api/*'))
+                return response()->json($curso);
+
             return view('curso.show', compact(['curso']));
         }
         return "<h1>Curso não encontrado!</h1>";
@@ -59,6 +70,9 @@ class CursoController extends Controller
         $curso = $this->service->find($id);
         Gate::authorize('update', $curso);
         if (isset($curso)) {
+            if (request()->is('api/*'))
+                return response()->json($curso);
+
             return view('curso.edit', compact(['curso']));
         }
         return "<h1>Curso não encontrado!</h1>";
@@ -68,7 +82,10 @@ class CursoController extends Controller
         $curso = $this->service->find($id);
         Gate::authorize('update', $curso);
         if (isset($curso)) {
-            $this->service->update($request->validated(), $id);
+
+            $updated = $this->service->update($request->validated(), $id);
+            if (request()->is('api/*'))
+                return response()->json($updated);
             return redirect()->route('curso.index');
         }
         return "<h1>Curso não encontrado!</h1>";
@@ -79,6 +96,12 @@ class CursoController extends Controller
         Gate::authorize('delete', $curso);
         if (isset($curso)) {
             $this->service->remove($id);
+            
+            if (request()->is('api/*'))
+                return response()->json(
+                    ['message' => 'Curso removido com sucesso.']
+                );
+
             return redirect()->route('curso.index');
         }
         return "<h1>Curso não encontrado!</h1>";

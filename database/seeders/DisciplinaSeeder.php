@@ -13,14 +13,13 @@ class DisciplinaSeeder extends Seeder
      */
     public function run(): void
     {
-        $data;
-
         $data = [
-            ["nome" => "Orientacao a objetos", "carga_horaria" => 60, "curso_id" => 1],
-            ["nome" => "Desenvolvimento WEB1", "carga_horaria" => 60, "curso_id" => 1],
-            ["nome" => "Analise de sistemas", "carga_horaria" => 60, "curso_id" => 1],
-            ["nome" => "Banco de dados", "carga_horaria" => 60, "curso_id" => 1]
+            ["nome" => "MATEMÁTICA", "carga_horaria" => 3, "curso_id" => 1],
+            ["nome" => "FÍSICA", "carga_horaria" => 2, "curso_id" => 1],
+            ["nome" => "PROGRAMAÇÃO", "carga_horaria" => 4, "curso_id" => 2],
+            ["nome" => "BANCO DE DADOS", "carga_horaria" => 2, "curso_id" => 2],
         ];
+
 
         DB::table("disciplinas")->insert($data);
     }

@@ -10,12 +10,12 @@ use App\Models\Disciplina;
 use OwenIt\Auditing\Contracts\Auditable; 
 use OwenIt\Auditing\Auditable as AuditableTrait; 
 
-class Matricula extends Model
+class Matricula extends Model implements Auditable
 {
-
+    use AuditableTrait;
     public $incrementing = false;
     
-    protected $fillabe = [
+    protected $fillable = [
         "disciplina_id",
         "aluno_id"
     ];

@@ -16,6 +16,7 @@ class RoleSeeder extends Seeder
         $data = [
                 ["name" => "PROFESSOR"],
                 ["name" => "COORDENADOR"],
+                ["name" => "ALUNO"],
         ];
 
         DB::table("roles")->insert($data);

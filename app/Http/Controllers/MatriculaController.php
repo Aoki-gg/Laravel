@@ -2,75 +2,112 @@
 
 namespace App\Http\Controllers;
 
+namespace App\Http\Controllers;
 use App\Models\Matricula;
-use App\Models\Aluno;
-use App\Models\Disciplina;
-use Illuminate\Http\Request;
 use App\Http\Requests\MatriculaRequest;
+use Illuminate\Support\Facades\Gate;
+use App\Services\MatriculaService;
 
 class MatriculaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(protected MatriculaService $service)
+    {
+    }
+
+    public function audit(string $id)
+    {
+        $matricula = $this->service->find($id);
+        Gate::authorize('delete', $matricula);
+        if (isset($matricula)) {
+            $data = $this->service->audit($id);
+            return view('matricula.audit', compact(['data']));
+        }
+        return "<h1>Não encontrado!</h1>";
+    }
+
     public function index()
     {
-        $data = Matricula::with(["aluno", "disciplina"])->get();
+        Gate::authorize('viewAny', Matricula::class);
+        $data = $this->service->all(
+            ['aluno', 'disciplina'],
+            [],
+            'aluno_id'
+        );
+        if (request()->is('api/*'))
+            return response()->json($data);
 
-        return view("matricula.index", compact("data"));
+        return view('matricula.index', compact(['data']));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
-        return view("matricula.create");
+        Gate::authorize('create', Matricula::class);
+        if (request()->is('api/*'))
+            return response()->json(['message' => 'Create!']);
+        return view('matricula.create');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(MatriculaRequest $request)
     {
-        Matricula::create($request->validated());
-        return redirect()->route("matricula.index");
-    }
+        Gate::authorize('create', Matricula::class);
+        $matricula = $this->service->store($request->validated());
+        if ($request->is('api/*'))
+            return response()->json($matricula, 201);
 
-    /**
-     * Display the specified resource.
-     */
+        return redirect()->route('matricula.index');
+    }
     public function show(string $id)
     {
-        //
+        $matricula = $this->service->find($id);
+        Gate::authorize('view', $matricula);
+        if (isset($matricula)) {
+            if (request()->is('api/*'))
+                return response()->json($matricula);
+
+            return view('matricula.show', compact(['matricula']));
+        }
+        return "<h1>matricula não encontrado!</h1>";
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Matricula $matricula)
+    public function edit(string $id)
     {
-        //
-    }
+        $matricula = $this->service->find($id);
+        Gate::authorize('update', $matricula);
+        if (isset($matricula)) {
+            if (request()->is('api/*'))
+                return response()->json($matricula);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Matricula $matricula)
+            return view('matricula.edit', compact(['matricula']));
+        }
+        return "<h1>matricula não encontrado!</h1>";
+    }
+    public function update(MatriculaRequest $request, string $id)
     {
-        //
-    }
+        $matricula = $this->service->find($id);
+        Gate::authorize('update', $matricula);
+        if (isset($matricula)) {
 
-    /**
-     * Remove the specified resource from storage.
-     */
+            $updated = $this->service->update($request->validated(), $id);
+            if (request()->is('api/*'))
+                return response()->json($updated);
+            return redirect()->route('curso.index');
+        }
+        return "<h1>matricula não encontrado!</h1>";
+    }
     public function destroy(string $id)
     {
-        $matricula = Matricula::find()->where("aluno_id", $id);
+        $matricula = $this->service->find($id);
+        Gate::authorize('delete', $matricula);
+        if (isset($matricula)) {
+            $this->service->remove($id);
+            
+            if (request()->is('api/*'))
+                return response()->json(
+                    ['message' => 'matricula removido com sucesso.']
+                );
 
-        if(isset($matricula)){
-            $matricula->delete()->where("aluno_id", $id);
-            return redirect()->route("matricula.index");
+            return redirect()->route('matricula.index');
         }
+        return "<h1>matricula não encontrado!</h1>";
     }
 }

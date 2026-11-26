@@ -17,18 +17,25 @@ class DisciplinaController extends Controller
     {
         Gate::authorize('viewAny', Disciplina::class);
         $data = $this->service->all(['curso'], [], 'nome');
+        if (request()->is('api/*'))
+            return response()->json($data);
         return view('disciplina.index', compact(['data']));
     }
     public function create()
     {
         Gate::authorize('create', Disciplina::class);
         $cursos = $this->cursoService->all([], [], 'nome');
+        if (request()->is("api/*"))
+            return response()->json($cursos);
+
         return view('disciplina.create', compact(['cursos']));
     }
     public function store(DisciplinaRequest $request)
     {
         Gate::authorize('create', Disciplina::class);
-        $this->service->store($request->validated());
+        $disciplina = $this->service->store($request->validated());
+        if (request()->is("api/*"))
+            return response()->json($disciplina);
         return redirect()->route('disciplina.index');
     }
     public function show(string $id)
@@ -36,6 +43,8 @@ class DisciplinaController extends Controller
         $disciplina = $this->service->find($id, ['curso']);
         Gate::authorize('view', $disciplina);
         if (isset($disciplina)) {
+            if (request()->is('api/*'))
+                return response()->json($disciplina);
             return view('disciplina.show', compact(['disciplina']));
         }
         return "<h1>Disciplina não encontrada!</h1>";
@@ -46,10 +55,10 @@ class DisciplinaController extends Controller
         Gate::authorize('update', $disciplina);
         $cursos = $this->cursoService->all([], [], 'nome');
         if (isset($disciplina)) {
-            return view('disciplina.edit', compact([
-                'disciplina',
-                'cursos'
-            ]));
+            if (request()->is('api/*'))
+                return response()->json($disciplina);
+
+            return view('disciplina.edit', compact(['disciplina', 'cursos']));
         }
         return "<h1>Disciplina não encontrada!</h1>";
     }
@@ -58,7 +67,10 @@ class DisciplinaController extends Controller
         $disciplina = $this->service->find($id);
         Gate::authorize('update', $disciplina);
         if (isset($disciplina)) {
-            $this->service->update($request->validated(), $id);
+            $updated = $this->service->update($request->validated(), $id);
+            if (request()->is('api/*'))
+                return response()->json($updated);
+
             return redirect()->route('disciplina.index');
         }
         return "<h1>Disciplina não encontrada!</h1>";
@@ -69,6 +81,12 @@ class DisciplinaController extends Controller
         Gate::authorize('delete', $disciplina);
         if (isset($disciplina)) {
             $this->service->remove($id);
+
+            if (request()->is('api/*'))
+                return response()->json(
+                    ['message' => 'Disciplina removida com sucesso.']
+                );
+
             return redirect()->route('disciplina.index');
         }
         return "<h1>Disciplina não encontrada!</h1>";

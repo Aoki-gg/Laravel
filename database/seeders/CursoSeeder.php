@@ -13,12 +13,11 @@ class CursoSeeder extends Seeder
      */
     public function run(): void
     {
-        $data;
-
-        $data = [["nome" => "Tecnologia em analise e desenvolvimento de sistemas", "duracao" => 3],
-                 ["nome" => "Fisica", "duracao" => 3],
-                 ["nome" => "Meio ambiente", "duracao" => 3]
+        $data = [
+            ["nome" => "TÉCNICO EM INFORMÁTICA", "duracao" => 4],
+            ["nome" => "TECNÓLOGO EM DESENVOLVIMENTO", "duracao" => 3],
         ];
+
         DB::table("cursos")->insert($data);
     }
 }

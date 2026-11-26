@@ -2,8 +2,9 @@
     'template/main',
     [
         'titulo' => "Sistema Aula",
-        'cabecalho' => 'Alunos Matriculados',
+        'cabecalho' => 'Alunos disciplinas',
         'rota' => 'matricula.index',
+        "class" => App\Models\Matricula::class,
     ]
 )
 @section('conteudo')
